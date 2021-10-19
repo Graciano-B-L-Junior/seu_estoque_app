@@ -1,4 +1,6 @@
+import 'package:app_estoque/Telas/cadastrar_produto.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -9,6 +11,61 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int indiceBottomNavBar = 1;
+  List telas = [CadastrarProduto()];
+  Card retornaCarta(String tituloCarta, IconData icone, int indiceTela) {
+    return Card(
+      child: InkWell(
+        splashColor: Colors.yellow,
+        onTap: () {},
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.43,
+          height: 150,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icone),
+              SizedBox(
+                height: 20,
+              ),
+              Text(tituloCarta)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Card retornaCartaFA(String tituloCarta, IconData icone, int indiceTela) {
+    return Card(
+      child: InkWell(
+        splashColor: Colors.yellow,
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => telas[indiceTela]));
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.43,
+          height: 150,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FaIcon(
+                icone,
+                size: 40,
+                color: Colors.yellow.shade600,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(tituloCarta)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +77,35 @@ class _HomeState extends State<Home> {
         ),
       ),
       body: Container(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          children: const <Widget>[
-            SizedBox(
-              height: 20,
+          padding: const EdgeInsets.all(15),
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    retornaCartaFA("Seu estoque", FontAwesomeIcons.box, 0),
+                    retornaCartaFA(
+                        "Cadastrar produto", FontAwesomeIcons.boxOpen, 0)
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    retornaCartaFA(
+                        "Atualizar produto", FontAwesomeIcons.penAlt, 0),
+                    retornaCartaFA("Deletar produto", FontAwesomeIcons.trash, 0)
+                  ],
+                ),
+              ],
             ),
-            Text("Teste")
-          ],
-        ),
-      ),
+          )),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
