@@ -1,4 +1,5 @@
 import 'package:app_estoque/Telas/cadastrar_produto.dart';
+import 'package:app_estoque/Telas/lista_produtos.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -11,7 +12,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int indiceBottomNavBar = 1;
-  List telas = [CadastrarProduto()];
+  List telas = [CadastrarProduto(), ListaProdutos()];
   Card retornaCarta(String tituloCarta, IconData icone, int indiceTela) {
     return Card(
       child: InkWell(
@@ -73,7 +74,7 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          "Seu Stock",
+          "Seu Estoque",
         ),
       ),
       body: Container(
@@ -87,7 +88,7 @@ class _HomeState extends State<Home> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    retornaCartaFA("Seu estoque", FontAwesomeIcons.box, 0),
+                    retornaCartaFA("Seu estoque", FontAwesomeIcons.box, 1),
                     retornaCartaFA(
                         "Cadastrar produto", FontAwesomeIcons.boxOpen, 0)
                   ],
