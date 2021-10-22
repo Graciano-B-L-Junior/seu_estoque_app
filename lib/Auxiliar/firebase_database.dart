@@ -5,9 +5,17 @@ class BancoDeDados {
 
   CollectionReference _usuarios =
       FirebaseFirestore.instance.collection('usuarios');
+  CollectionReference _produtos = FirebaseFirestore.instance
+      .collection('usuarios')
+      .doc('glaeda')
+      .collection('produto');
 
   CollectionReference get usuarios {
     return _usuarios;
+  }
+
+  CollectionReference get produtos {
+    return _produtos;
   }
 
   Future<void> adicionarProduto(String categoria, String nomeProduto,

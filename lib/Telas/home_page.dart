@@ -100,7 +100,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     retornaCartaFA(
-                        "Atualizar produto", FontAwesomeIcons.penAlt, 0),
+                        "Editar produto", FontAwesomeIcons.penAlt, 0),
                     retornaCartaFA("Deletar produto", FontAwesomeIcons.trash, 0)
                   ],
                 ),
