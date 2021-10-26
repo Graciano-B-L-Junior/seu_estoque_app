@@ -1,7 +1,11 @@
+import 'package:app_estoque/Auxiliar/camera_list.dart';
 import 'package:app_estoque/Auxiliar/firebase_database.dart';
+import 'package:app_estoque/Telas/tela_auxiliar/photo.dart';
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class CadastrarProduto extends StatefulWidget {
   const CadastrarProduto({Key? key}) : super(key: key);
@@ -18,6 +22,28 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
   TextEditingController precoVenda = TextEditingController();
   TextEditingController quantidade = TextEditingController();
   TextEditingController categoria = TextEditingController();
+
+  List<CameraDescription> cameras = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  final List<MaskTextInputFormatter> _mascara = [
+    MaskTextInputFormatter(mask: '###,##', filter: {"#": RegExp(r'[0-9]')}),
+  ];
+  @override
+  void dispose() {
+    nomeProduto.dispose();
+    precoCusto.dispose();
+    precoVenda.dispose();
+    quantidade.dispose();
+    categoria.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +88,11 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextFormField(
                     controller: precoCusto,
+                    inputFormatters: _mascara,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Colors.grey),
+                        hintText: "0,00",
                         icon: FaIcon(FontAwesomeIcons.moneyBillAlt),
                         labelText: "Preço de custo"),
                     validator: (String? value) {
@@ -80,8 +109,11 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextFormField(
                     controller: precoVenda,
+                    inputFormatters: _mascara,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Colors.grey),
+                        hintText: "0,00",
                         icon: FaIcon(FontAwesomeIcons.solidMoneyBillAlt),
                         labelText: "Preço de venda"),
                     validator: (String? value) {
@@ -132,7 +164,13 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
                 Container(
                   alignment: Alignment.center,
                   child: IconButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    photo(camera: ListaCameras.cams.first)));
+                      },
                       icon: FaIcon(
                         FontAwesomeIcons.camera,
                         size: 35,
@@ -169,11 +207,15 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
                                     'Preencha todos os campos corretamente')),
                           );
                         } else {
+                          String custo =
+                              precoCusto.text.replaceAll(RegExp(r'[,]'), '.');
+                          String venda =
+                              precoVenda.text.replaceAll(RegExp(r'[,]'), '.');
                           await BancoDeDados.instance.adicionarProduto(
                               categoria.text,
                               nomeProduto.text,
-                              double.parse(precoCusto.text),
-                              double.parse(precoVenda.text),
+                              double.parse(custo),
+                              double.parse(venda),
                               int.parse(quantidade.text));
                           await showDialog(
                               context: context,
