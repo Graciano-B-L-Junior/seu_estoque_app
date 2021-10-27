@@ -65,6 +65,7 @@ class _photoState extends State<photo> {
                 ),
               ),
             );
+            Navigator.pop(context, image);
           } catch (e) {
             // If an error occurs, log the error to the console.
             print(e);

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:app_estoque/Auxiliar/camera_list.dart';
 import 'package:app_estoque/Auxiliar/firebase_database.dart';
 import 'package:app_estoque/Telas/tela_auxiliar/photo.dart';
@@ -25,8 +26,30 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
 
   List<CameraDescription> cameras = [];
 
+  XFile foto = XFile("");
+
+  Widget mostraFoto() {
+    if (foto.path == "" || foto.path.isEmpty) {
+      return Container();
+    } else {
+      return Container(
+        alignment: Alignment.center,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(60.0),
+          child: Image.file(
+            File(foto.path),
+            fit: BoxFit.fill,
+            width: 100,
+            height: 100,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
+    print(foto.path);
     // TODO: implement initState
     super.initState();
   }
@@ -161,15 +184,20 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
                 const SizedBox(
                   height: 30,
                 ),
+                mostraFoto(),
                 Container(
                   alignment: Alignment.center,
                   child: IconButton(
                       onPressed: () async {
-                        await Navigator.push(
+                        var picture = await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                     photo(camera: ListaCameras.cams.first)));
+                        setState(() {
+                          foto = picture;
+                          print(foto.path);
+                        });
                       },
                       icon: FaIcon(
                         FontAwesomeIcons.camera,
