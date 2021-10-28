@@ -5,7 +5,9 @@ import 'package:app_estoque/Telas/tela_auxiliar/photo.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class CadastrarProduto extends StatefulWidget {
@@ -28,6 +30,8 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
 
   XFile foto = XFile("");
 
+  bool isFirst = true;
+
   Widget mostraFoto() {
     if (foto.path == "" || foto.path.isEmpty) {
       return Container();
@@ -49,7 +53,6 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
 
   @override
   void initState() {
-    print(foto.path);
     // TODO: implement initState
     super.initState();
   }
@@ -110,12 +113,13 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
                 Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextFormField(
+                    textAlign: TextAlign.left,
                     controller: precoCusto,
                     inputFormatters: _mascara,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                         hintStyle: TextStyle(color: Colors.grey),
-                        hintText: "0,00",
+                        hintText: "R\$ 00,00",
                         icon: FaIcon(FontAwesomeIcons.moneyBillAlt),
                         labelText: "Preço de custo"),
                     validator: (String? value) {
