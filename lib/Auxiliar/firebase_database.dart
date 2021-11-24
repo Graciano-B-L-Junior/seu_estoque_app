@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class BancoDeDados {
   static BancoDeDados instance = BancoDeDados();
 
-  CollectionReference _usuarios =
+  final CollectionReference _usuarios =
       FirebaseFirestore.instance.collection('usuarios');
-  CollectionReference _produtos = FirebaseFirestore.instance
+  final CollectionReference _produtos = FirebaseFirestore.instance
       .collection('usuarios')
       .doc('glaeda')
       .collection('produto');

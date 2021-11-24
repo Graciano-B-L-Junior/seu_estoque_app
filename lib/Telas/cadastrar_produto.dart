@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:app_estoque/Auxiliar/camera_list.dart';
 import 'package:app_estoque/Auxiliar/firebase_database.dart';
 import 'package:app_estoque/Telas/tela_auxiliar/photo.dart';
+import 'package:brasil_fields/brasil_fields.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,54 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
         ),
       );
     }
+  }
+
+  void cadastrarProduto() async {
+    // Validate returns true if the form is valid, or false otherwise.
+    if (_formKey.currentState!.validate() == false) {
+      // If the form is valid, display a snackbar. In the real world,
+      // you'd often call a server or save the information in a database.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha todos os campos corretamente')),
+      );
+    } else {
+      String custo = precoCusto.text.replaceAll(RegExp(r'[,]'), '.');
+      String venda = precoVenda.text.replaceAll(RegExp(r'[,]'), '.');
+      await BancoDeDados.instance.adicionarProduto(
+          categoria.text,
+          nomeProduto.text,
+          double.parse(custo),
+          double.parse(venda),
+          int.parse(quantidade.text));
+      await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Atenção"),
+              content: Text("O produto foi cadastrado com sucesso!"),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Retornar"))
+              ],
+            );
+          });
+      Navigator.pop(context);
+    }
+  }
+
+  void tirarFoto() async {
+    var picture = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) =>
+                photo(camera: ListaCameras.cams.first)));
+    setState(() {
+      foto = picture;
+      print(foto.path);
+    });
   }
 
   @override
@@ -115,9 +164,12 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
                   child: TextFormField(
                     textAlign: TextAlign.left,
                     controller: precoCusto,
-                    inputFormatters: _mascara,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      CentavosInputFormatter()
+                    ],
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         hintStyle: TextStyle(color: Colors.grey),
                         hintText: "R\$ 00,00",
                         icon: FaIcon(FontAwesomeIcons.moneyBillAlt),
@@ -129,18 +181,21 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
                     },
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextFormField(
                     controller: precoVenda,
-                    inputFormatters: _mascara,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      CentavosInputFormatter()
+                    ],
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         hintStyle: TextStyle(color: Colors.grey),
-                        hintText: "0,00",
+                        hintText: "R\$ 00,00",
                         icon: FaIcon(FontAwesomeIcons.solidMoneyBillAlt),
                         labelText: "Preço de venda"),
                     validator: (String? value) {
@@ -158,7 +213,7 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
                   child: TextFormField(
                     controller: quantidade,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         icon: FaIcon(FontAwesomeIcons.cubes),
                         labelText: "Quantidade do produto"),
                     validator: (String? value) {
@@ -175,7 +230,7 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextFormField(
                     controller: categoria,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         icon: FaIcon(FontAwesomeIcons.tag),
                         labelText: "Qual a categoria do produto"),
                     validator: (String? value) {
@@ -192,17 +247,7 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
                 Container(
                   alignment: Alignment.center,
                   child: IconButton(
-                      onPressed: () async {
-                        var picture = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    photo(camera: ListaCameras.cams.first)));
-                        setState(() {
-                          foto = picture;
-                          print(foto.path);
-                        });
-                      },
+                      onPressed: tirarFoto,
                       icon: FaIcon(
                         FontAwesomeIcons.camera,
                         size: 35,
@@ -228,46 +273,7 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
                           shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(18)))),
-                      onPressed: () async {
-                        // Validate returns true if the form is valid, or false otherwise.
-                        if (_formKey.currentState!.validate() == false) {
-                          // If the form is valid, display a snackbar. In the real world,
-                          // you'd often call a server or save the information in a database.
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text(
-                                    'Preencha todos os campos corretamente')),
-                          );
-                        } else {
-                          String custo =
-                              precoCusto.text.replaceAll(RegExp(r'[,]'), '.');
-                          String venda =
-                              precoVenda.text.replaceAll(RegExp(r'[,]'), '.');
-                          await BancoDeDados.instance.adicionarProduto(
-                              categoria.text,
-                              nomeProduto.text,
-                              double.parse(custo),
-                              double.parse(venda),
-                              int.parse(quantidade.text));
-                          await showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text("Atenção"),
-                                  content: Text(
-                                      "O produto foi cadastrado com sucesso!"),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("Retornar"))
-                                  ],
-                                );
-                              });
-                          Navigator.pop(context);
-                        }
-                      },
+                      onPressed: cadastrarProduto,
                       child: const Text("Cadastrar produto")),
                 )
               ],
