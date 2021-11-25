@@ -63,12 +63,22 @@ class _CadastrarProdutoState extends State<CadastrarProduto> {
     } else {
       String custo = precoCusto.text.replaceAll(RegExp(r'[,]'), '.');
       String venda = precoVenda.text.replaceAll(RegExp(r'[,]'), '.');
-      await BancoDeDados.instance.adicionarProduto(
-          categoria.text,
-          nomeProduto.text,
-          double.parse(custo),
-          double.parse(venda),
-          int.parse(quantidade.text));
+      if (foto.path.isEmpty || foto.path == "") {
+        await BancoDeDados.instance.adicionarProduto(
+            categoria.text,
+            nomeProduto.text,
+            double.parse(custo),
+            double.parse(venda),
+            int.parse(quantidade.text));
+      } else {
+        await BancoDeDados.instance.adicionarProdutoComFoto(
+            categoria.text,
+            nomeProduto.text,
+            double.parse(custo),
+            double.parse(venda),
+            int.parse(quantidade.text),
+            foto.path);
+      }
       await showDialog(
           context: context,
           builder: (BuildContext context) {

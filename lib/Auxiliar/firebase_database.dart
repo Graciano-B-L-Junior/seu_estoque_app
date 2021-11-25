@@ -33,4 +33,26 @@ class BancoDeDados {
         .then((value) {})
         .catchError((erro) {});
   }
+
+  Future<void> adicionarProdutoComFoto(
+      String categoria,
+      String nomeProduto,
+      double precoCusto,
+      double precoVenda,
+      int quantidade,
+      String caminhoFoto) {
+    return _usuarios
+        .doc('glaeda')
+        .collection('produto')
+        .add({
+          'categoria': categoria,
+          'nomeProduto': nomeProduto,
+          'precoCusto': precoCusto,
+          'precoVenda': precoVenda,
+          'quantidade': quantidade,
+          'foto': caminhoFoto
+        })
+        .then((value) {})
+        .catchError((erro) {});
+  }
 }

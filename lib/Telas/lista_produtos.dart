@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:app_estoque/Auxiliar/firebase_database.dart';
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -11,6 +14,32 @@ class ListaProdutos extends StatefulWidget {
 }
 
 class _ListaProdutosState extends State<ListaProdutos> {
+  Widget mostraIconeOuFoto(documento) {
+    try {
+      documento = documento['foto'];
+    } catch (e) {
+      documento = "";
+    }
+    if (documento.isEmpty || documento == "") {
+      return FaIcon(
+        FontAwesomeIcons.box,
+        color: Colors.yellow.shade600,
+      );
+    }
+    XFile foto = XFile(documento);
+    return SizedBox(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(60.0),
+        child: Image.file(
+          File(foto.path),
+          fit: BoxFit.fill,
+        ),
+      ),
+      height: 45,
+      width: 45,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,6 +52,7 @@ class _ListaProdutosState extends State<ListaProdutos> {
                 return Text("Something went wrong");
               }
               if (snapshot.connectionState == ConnectionState.done) {
+                snapshot.data!.docs.forEach((element) {});
                 return ListView.builder(
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (context, index) {
@@ -32,10 +62,8 @@ class _ListaProdutosState extends State<ListaProdutos> {
                               "Quantidade: ${snapshot.data!.docs[index]['quantidade']}"),
                           title: Text(
                               "${snapshot.data!.docs[index]['nomeProduto']}"),
-                          leading: FaIcon(
-                            FontAwesomeIcons.box,
-                            color: Colors.yellow.shade600,
-                          ),
+                          leading:
+                              mostraIconeOuFoto(snapshot.data!.docs[index]),
                           trailing: IconButton(
                               onPressed: () {},
                               icon: FaIcon(
